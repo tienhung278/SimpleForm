@@ -1,0 +1,28 @@
+<div class="card mt-3">
+    <div class="card-header">
+        User Information
+    </div>
+    <div class="card-body">        
+        <div class="row row-cols-6">
+            <div class="col">
+                First Name
+            </div>
+            <div class="col">
+                : {{user.firstName}}
+            </div>
+        </div>
+        <div class="row row-cols-6">
+            <div class="col">
+                Last Name
+            </div>
+            <div class="col">
+                : {{user.lastName}}
+            </div>
+        </div>        
+    </div>
+    <div class="card-footer">        
+        <button type="button" class="btn btn-outline-info me-3" routerLink="/user">Back</button>
+        <button type="button" class="btn btn-outline-primary" routerLink="/user/update/{{user.id}}">Edit</button>        
+    </div>
+</div>
+<app-error-modal [header]="title" [body]="body"></app-error-modal>

@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFormAPI", "SimpleFormAPI\SimpleFormAPI.csproj", "{4FA9FF13-3330-480B-8434-9345FC4D1E7C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FA9FF13-3330-480B-8434-9345FC4D1E7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA9FF13-3330-480B-8434-9345FC4D1E7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA9FF13-3330-480B-8434-9345FC4D1E7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA9FF13-3330-480B-8434-9345FC4D1E7C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CCA838F5-8126-47B7-A182-85610DD179F1}
+	EndGlobalSection
+EndGlobal
