@@ -16,12 +16,5 @@ namespace SimpleFormAPI.Models
 
         [Required(ErrorMessage = "Last name is required")]
         public string LastName { get; set; }
-
-        public User(UserWriteDTO userWriteDTO)
-        {
-            Id = Guid.NewGuid();
-            FirstName = userWriteDTO.FirstName;
-            LastName = userWriteDTO.LastName;
-        }
     }
 }

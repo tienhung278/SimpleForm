@@ -7,45 +7,39 @@ using System.Threading.Tasks;
 
 namespace SimpleFormAPI.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        private readonly RepositoryContext context;
-
-        public UserRepository(RepositoryContext context)
+        public UserRepository(RepositoryContext context) : base(context)
         {
-            this.context = context;
+            
         }
-        public void AddUser(User user)
+
+        public void CreateUser(User user)
         {
-            context.Add(user);
-            Save();
+            Create(user);
         }
 
         public void DeleteUser(User user)
         {
-            context.Delete(user);
-            Save();
+            Delete(user);
         }
 
-        public List<User> GetAllUser()
+        public ICollection<User> GetAllUsers()
         {
-            return context.User;
+            return FindAll()
+                .OrderBy(o => o.FirstName)
+                .ToList();
         }
 
         public User GetUserById(Guid id)
         {
-            return context.User.Find(u => u.Id == id);
-        }
-
-        private void Save()
-        {
-            context.SaveChange();
+            return FindByCondition(u => u.Id == id)
+                .SingleOrDefault();
         }
 
         public void UpdateUser(User user)
         {
-            context.Update(user);
-            Save();
+            Update(user);
         }
     }
 }

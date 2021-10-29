@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using SimpleFormAPI.Contracts;
 using SimpleFormAPI.DTOs;
 using SimpleFormAPI.Models;
@@ -15,38 +16,35 @@ namespace SimpleFormAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository repository;
+        private readonly IRepositoryWrapper _repository;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUserRepository repository)
+        public UsersController(IRepositoryWrapper repository, IMapper mapper)
         {
-            this.repository = repository;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         // GET: api/<UsersController>
         [HttpGet]
         public IActionResult Get()
         {
-            List<UserReadDTO> userReadDTOs = new List<UserReadDTO>();
-            List<User> users = repository.GetAllUser();
-            foreach (var user in users)
-            {
-                UserReadDTO userReadDTO = new UserReadDTO(user);
-                userReadDTOs.Add(userReadDTO);
-            }
-            return Ok(userReadDTOs);
+            var users = _repository.User.GetAllUsers();
+            var result = _mapper.Map<ICollection<UserReadDTO>>(users);
+            return Ok(result);
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var user = repository.GetUserById(id);
+            var user = _repository.User.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
-            var userReadDTO = new UserReadDTO(user);
-            return Ok(userReadDTO);
+            var result = _mapper.Map<UserReadDTO>(user);
+            return Ok(result);
         }
 
         // POST api/<UsersController>
@@ -57,8 +55,10 @@ namespace SimpleFormAPI.Controllers
             {
                 return BadRequest();
             }
-            var user = new User(userWriteDTO);
-            repository.AddUser(user);
+            var user = _mapper.Map<User>(userWriteDTO);
+            user.Id = Guid.NewGuid();
+            _repository.User.CreateUser(user);
+            _repository.Save();
             return RedirectToAction("Get", new { id = user.Id });
         }
 
@@ -66,7 +66,7 @@ namespace SimpleFormAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, UserWriteDTO userWriteDTO)
         {
-            var user = repository.GetUserById(id);
+            var user = _repository.User.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -75,9 +75,10 @@ namespace SimpleFormAPI.Controllers
             {
                 return BadRequest();
             }
-            user.FirstName = userWriteDTO.FirstName;
-            user.LastName = userWriteDTO.LastName;
-            repository.UpdateUser(user);
+            var updatedUser = _mapper.Map<User>(userWriteDTO);
+            updatedUser.Id = id;
+            _repository.User.UpdateUser(updatedUser);
+            _repository.Save();
             return NoContent();
         }
 
@@ -85,12 +86,13 @@ namespace SimpleFormAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var user = repository.GetUserById(id);
+            var user = _repository.User.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
-            repository.DeleteUser(user);
+            _repository.User.DeleteUser(user);
+            _repository.Save();
             return NoContent();
         }
     }

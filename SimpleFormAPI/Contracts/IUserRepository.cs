@@ -8,9 +8,9 @@ namespace SimpleFormAPI.Contracts
 {
     public interface IUserRepository
     {
-        List<User> GetAllUser();
+        ICollection<User> GetAllUsers();
         User GetUserById(Guid id);
-        void AddUser(User user);
+        void CreateUser(User user);
         void UpdateUser(User user);
         void DeleteUser(User user);
     }

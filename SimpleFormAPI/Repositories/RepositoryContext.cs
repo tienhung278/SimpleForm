@@ -10,42 +10,34 @@ namespace SimpleFormAPI.Repositories
 {
     public class RepositoryContext
     {
-        private List<User> store;
-
-        public List<User> User
-        {
-            get
-            {
-                return store;
-            }
-        }
+        Object _store;
+        string _filename;
 
         public RepositoryContext()
         {
-            store = new List<User>();
+            
         }
 
-        public void Add(User user)
+        public List<T> Set<T>() where T : class
         {
-            store.Add(user);
+            _filename = string.Format("{0}Store.txt", typeof(T).Name);
+            if (File.Exists(_filename))
+            {
+                var json = File.ReadAllText(_filename);
+                _store = JsonSerializer.Deserialize<List<T>>(json);
+            }
+            else
+            {
+                _store = new List<T>();
+            }
+
+            return _store as List<T>;
         }
 
-        public void Update(User user)
+        public void SaveChanges()
         {
-            var u = store.Find(u => u.Id == user.Id);
-            u.FirstName = user.FirstName;
-            u.LastName = user.LastName;
-        }
-
-        public void Delete(User user)
-        {
-            store.Remove(user);
-        }
-
-        public void SaveChange()
-        {
-            string json = JsonSerializer.Serialize(store);
-            File.WriteAllText("data.txt", json);
+            var json = JsonSerializer.Serialize(_store);
+            File.WriteAllText(_filename, json);
         }
     }
 }

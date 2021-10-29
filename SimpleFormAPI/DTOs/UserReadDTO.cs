@@ -13,12 +13,5 @@ namespace SimpleFormAPI.DTOs
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-
-        public UserReadDTO(User user)
-        {
-            Id = user.Id;
-            FirstName = user.FirstName;
-            LastName = user.LastName;
-        }
     }
 }
