@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimpleFormAPI.Contracts;
 using SimpleFormAPI.DTOs;
 using SimpleFormAPI.Models;
+using SimpleFormAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,35 +17,29 @@ namespace SimpleFormAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IRepositoryWrapper _repository;
-        private readonly IMapper _mapper;
+        private readonly UserServices _userServices;
 
-        public UsersController(IRepositoryWrapper repository, IMapper mapper)
+        public UsersController(UserServices userServices)
         {
-            _repository = repository;
-            _mapper = mapper;
+            _userServices = userServices;
         }
 
         // GET: api/<UsersController>
         [HttpGet]
         public IActionResult Get()
         {
-            var users = _repository.User.GetAllUsers();
-            var result = _mapper.Map<ICollection<UserReadDTO>>(users);
-            return Ok(result);
+            return Ok(_userServices.GetUsers());
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var user = _repository.User.GetUserById(id);
-            if (user == null)
+            if (!_userServices.IsExistingUser(id))
             {
                 return NotFound();
             }
-            var result = _mapper.Map<UserReadDTO>(user);
-            return Ok(result);
+            return Ok(_userServices.GetUser(id));
         }
 
         // POST api/<UsersController>
@@ -55,19 +50,15 @@ namespace SimpleFormAPI.Controllers
             {
                 return BadRequest();
             }
-            var user = _mapper.Map<User>(userWriteDTO);
-            user.Id = Guid.NewGuid();
-            _repository.User.CreateUser(user);
-            _repository.Save();
-            return RedirectToAction("Get", new { id = user.Id });
+            var userId = _userServices.CreateUser(userWriteDTO);
+            return RedirectToAction("Get", new { id = userId });
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, UserWriteDTO userWriteDTO)
         {
-            var user = _repository.User.GetUserById(id);
-            if (user == null)
+            if (!_userServices.IsExistingUser(id))
             {
                 return NotFound();
             }
@@ -75,10 +66,7 @@ namespace SimpleFormAPI.Controllers
             {
                 return BadRequest();
             }
-            var updatedUser = _mapper.Map<User>(userWriteDTO);
-            updatedUser.Id = id;
-            _repository.User.UpdateUser(updatedUser);
-            _repository.Save();
+            _userServices.UpdateUser(id, userWriteDTO);
             return NoContent();
         }
 
@@ -86,13 +74,11 @@ namespace SimpleFormAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var user = _repository.User.GetUserById(id);
-            if (user == null)
+            if (!_userServices.IsExistingUser(id))
             {
                 return NotFound();
             }
-            _repository.User.DeleteUser(user);
-            _repository.Save();
+            _userServices.DeleteUser(id);
             return NoContent();
         }
     }

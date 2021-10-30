@@ -21,11 +21,13 @@ namespace SimpleFormAPI.Repositories
         public void Create(T entity)
         {
             _store.Add(entity);
+            _repositoryContext.SaveChanges();
         }
 
         public void Delete(T entity)
         {
             _store.Remove(entity);
+            _repositoryContext.SaveChanges();
         }
 
         public IEnumerable<T> FindAll()
@@ -44,6 +46,7 @@ namespace SimpleFormAPI.Repositories
             var currentObj = _store.Single(o => (o as dynamic).Id == updatedObj.Id) as dynamic;
             currentObj.FirstName = updatedObj.FirstName;
             currentObj.LastName = updatedObj.LastName;
+            _repositoryContext.SaveChanges();
         }
     }
 }

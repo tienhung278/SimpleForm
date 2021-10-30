@@ -10,6 +10,7 @@ namespace SimpleFormAPI.Repositories
     {
         private readonly RepositoryContext _repositoryContext;
         private IUserRepository _user;
+        private IEventLogRepository _eventLog;
 
         public RepositoryWrapper(RepositoryContext repositoryContext)
         {
@@ -24,6 +25,18 @@ namespace SimpleFormAPI.Repositories
                     _user = new UserRepository(_repositoryContext);
                 }
                 return _user;
+            }
+        }
+
+        public IEventLogRepository EventLog
+        {
+            get
+            {
+                if (_eventLog == null)
+                {
+                    _eventLog = new EventLogRepository(_repositoryContext);
+                }
+                return _eventLog;
             }
         }
 

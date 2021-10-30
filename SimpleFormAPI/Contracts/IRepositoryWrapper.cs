@@ -8,6 +8,7 @@ namespace SimpleFormAPI.Contracts
     public interface IRepositoryWrapper
     {
         IUserRepository User { get; }
+        IEventLogRepository EventLog { get; }
         void Save();
     }
 }
