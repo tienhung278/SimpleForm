@@ -13,13 +13,13 @@ namespace SimpleFormAPI.Services
     public class UserServices
     {
         private readonly IUserRepository _userRepository;
-        private readonly IEventLogRepository _eventLogRepository;
+        private readonly EventLogServices _eventLogServices;
         private readonly IMapper _mapper;
 
-        public UserServices(IUserRepository userRepository, IEventLogRepository eventLogRepository , IMapper mapper)
+        public UserServices(IUserRepository userRepository, EventLogServices eventLogServices, IMapper mapper)
         {
             _userRepository = userRepository;
-            _eventLogRepository = eventLogRepository;
+            _eventLogServices = eventLogServices;
             _mapper = mapper;
         }
 
@@ -42,7 +42,7 @@ namespace SimpleFormAPI.Services
             var user = _mapper.Map<User>(userWriteDTO);
             user.Id = Guid.NewGuid();
             _userRepository.CreateUser(user);
-            CreateEventLog(Models.Action.Add, user);
+            _eventLogServices.CreateEventLog<User>(Models.Action.Add, user);
             return user.Id;
         }
         
@@ -51,31 +51,19 @@ namespace SimpleFormAPI.Services
             var updatedUser = _mapper.Map<User>(userWriteDTO);
             updatedUser.Id = id;
             _userRepository.UpdateUser(updatedUser);
-            CreateEventLog(Models.Action.Update, updatedUser);
+            _eventLogServices.CreateEventLog<User>(Models.Action.Update, updatedUser);
         }
 
         public void DeleteUser(Guid id)
         {
             var user = _userRepository.GetUserById(id);
             _userRepository.DeleteUser(user);
-            CreateEventLog(Models.Action.Delete, user);
+            _eventLogServices.CreateEventLog<User>(Models.Action.Delete, user);
         }
 
         public bool IsExistingUser(Guid id)
         {
             return _userRepository.GetUserById(id) != null;
-        }
-
-        private void CreateEventLog(Models.Action action, User user)
-        {
-            _eventLogRepository.CreateEventLog(new EventLog
-            {
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                Event = action,
-                Information = JsonSerializer.Serialize(user),
-                TransactionId = Guid.NewGuid()
-            });
         }
     }
 }

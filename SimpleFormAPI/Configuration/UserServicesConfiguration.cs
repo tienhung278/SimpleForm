@@ -14,23 +14,8 @@ namespace SimpleFormAPI.Configuration
     {
         public static IServiceCollection ConfigureUserServices(this IServiceCollection service)
         {
-            service.AddScoped<IUserRepository>(provider =>
-            {
-                return new UserRepository(provider.GetRequiredService<RepositoryContext>());
-            });
-
-            service.AddScoped<IEventLogRepository>(provider =>
-            {
-                return new EventLogRepository(provider.GetRequiredService<RepositoryContext>());
-            });
-
-            return service.AddScoped<UserServices>(provider =>
-            {
-                var userRepository = provider.GetRequiredService<IUserRepository>();
-                var eventLogRepository = provider.GetRequiredService<IEventLogRepository>();
-                var mapper = provider.GetRequiredService<IMapper>();
-                return new UserServices(userRepository, eventLogRepository, mapper);
-            });
+            service.AddScoped<IUserRepository, UserRepository>();
+            return service.AddScoped<UserServices>();
         }
     }
 }
